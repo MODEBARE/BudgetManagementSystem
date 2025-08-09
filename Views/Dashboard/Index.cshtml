@@ -1,0 +1,474 @@
+@using BudgetSystem.Models.ViewModels
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container-fluid py-4">
+    <!-- Welcome Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-primary text-white border-0">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h2 class="fw-bold mb-2">Welcome back, @Model.UserName! 👋</h2>
+                            <p class="mb-0 opacity-75">
+                                @if (Model.UserType == UserType.SME)
+                                {
+                                    <span>Ready to manage @(!string.IsNullOrEmpty(Model.CompanyName) ? Model.CompanyName + "'s" : "your business") finances? Let's make this month your most profitable yet!</span>
+                                }
+                                else
+                                {
+                                    <span>Ready to take control of your finances? Let's make this month your best yet!</span>
+                                }
+                            </p>
+                            <small class="opacity-50">Last login: @Model.LastLoginAt.ToString("MMM dd, yyyy 'at' h:mm tt")</small>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-chart-line fa-3x opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-success bg-opacity-10 rounded-circle p-3">
+                                <i class="fas fa-plus-circle fa-lg text-success"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="fw-bold mb-0">Total Income</h6>
+                            <h4 class="text-success fw-bold mb-0">@Model.GetCurrencySymbol()@Model.TotalIncome.ToString("N2")</h4>
+                            <small class="text-muted">This month</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-danger bg-opacity-10 rounded-circle p-3">
+                                <i class="fas fa-minus-circle fa-lg text-danger"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="fw-bold mb-0">Total Expenses</h6>
+                            <h4 class="text-danger fw-bold mb-0">@Model.GetCurrencySymbol()@Model.TotalExpenses.ToString("N2")</h4>
+                            <small class="text-muted">This month</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-primary bg-opacity-10 rounded-circle p-3">
+                                <i class="fas fa-piggy-bank fa-lg text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="fw-bold mb-0">Net Savings</h6>
+                            <h4 class="@(Model.NetSavings >= 0 ? "text-success" : "text-danger") fw-bold mb-0">
+                                @(Model.NetSavings >= 0 ? "+" : "")@Model.GetCurrencySymbol()@Model.NetSavings.ToString("N2")
+                            </h4>
+                            <small class="text-muted">This month</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-warning bg-opacity-10 rounded-circle p-3">
+                                <i class="fas fa-bullseye fa-lg text-warning"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="fw-bold mb-0">Budget Used</h6>
+                            <h4 class="text-warning fw-bold mb-0">@Model.BudgetUsedPercentage%</h4>
+                            <small class="text-muted">@(Model.HasBudgets ? "Of total budget" : "No budgets set")</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Accounts Overview -->
+    @if (Model.HasAccounts)
+    {
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold mb-0">
+                            <i class="fas fa-wallet me-2"></i>Your Accounts (@Model.TotalAccounts)
+                        </h5>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-primary">Total: @Model.GetCurrencySymbol()@Model.TotalAccountBalance.ToString("N2")</span>
+                            <a href="@Url.Action("Index", "MyAccounts")" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-cog me-1"></i>Manage
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            @foreach (var account in Model.Accounts.Take(4))
+                            {
+                                <div class="col-lg-3 col-md-6">
+                                    <div class="card bg-light border-0">
+                                        <div class="card-body text-center">
+                                            <div class="mb-2">
+                                                <i class="fas @GetAccountIcon(account.AccountType) fa-2x text-primary"></i>
+                                            </div>
+                                            <h6 class="fw-bold mb-1">@account.Name</h6>
+                                            <p class="text-muted small mb-1">@account.AccountType.ToString()</p>
+                                            <h5 class="fw-bold text-primary mb-0">
+                                                @GetCurrencySymbol(account.Currency)@account.CurrentBalance.ToString("N2")
+                                            </h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            @if (Model.TotalAccounts > 4)
+                            {
+                                <div class="col-lg-3 col-md-6">
+                                    <div class="card bg-light border-0">
+                                        <div class="card-body text-center d-flex flex-column justify-content-center">
+                                            <i class="fas fa-plus-circle fa-2x text-muted mb-2"></i>
+                                            <span class="text-muted">+@(Model.TotalAccounts - 4) more accounts</span>
+                                            <a href="#" class="btn btn-sm btn-outline-primary mt-2">View All</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-rocket me-2"></i>Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-lg-3 col-md-6">
+                            <a href="@Url.Action("AddIncome", "Transactions")" class="btn btn-outline-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3 text-decoration-none">
+                                <i class="fas fa-plus-circle fa-2x mb-2"></i>
+                                <span class="fw-semibold">Add Income</span>
+                                <small class="text-muted">Record new income</small>
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <a href="@Url.Action("AddExpense", "Transactions")" class="btn btn-outline-danger w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3 text-decoration-none">
+                                <i class="fas fa-minus-circle fa-2x mb-2"></i>
+                                <span class="fw-semibold">Add Expense</span>
+                                <small class="text-muted">Track your spending</small>
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <a href="@Url.Action("Transfer", "Transactions")" class="btn btn-outline-warning w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3 text-decoration-none">
+                                <i class="fas fa-exchange-alt fa-2x mb-2"></i>
+                                <span class="fw-semibold">Transfer Money</span>
+                                <small class="text-muted">Move between accounts</small>
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <a href="@Url.Action("Index", "Transactions")" class="btn btn-outline-info w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3 text-decoration-none">
+                                <i class="fas fa-history fa-2x mb-2"></i>
+                                <span class="fw-semibold">Transaction History</span>
+                                <small class="text-muted">View all transactions</small>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row g-3 mt-1">
+                        <div class="col-lg-3 col-md-6">
+                            <a href="@Url.Action("Index", "MyAccounts")" class="btn btn-outline-secondary w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3 text-decoration-none">
+                                <i class="fas fa-cog fa-2x mb-2"></i>
+                                <span class="fw-semibold">Manage Accounts</span>
+                                <small class="text-muted">Add, edit, view accounts</small>
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <a href="#" class="btn btn-outline-success w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3 text-decoration-none">
+                                <i class="fas fa-calculator fa-2x mb-2"></i>
+                                <span class="fw-semibold">Create Budget</span>
+                                <small class="text-muted">Plan your finances</small>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Getting Started Progress -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-tasks me-2"></i>Getting Started
+                    </h5>
+                    <div class="progress" style="width: 120px; height: 20px;">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: @Model.SetupProgressPercentage%">
+                            @Model.SetupProgressPercentage%
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-3">Complete these steps to get the most out of Budget System:</p>
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item d-flex align-items-center px-0">
+                            <div class="flex-shrink-0">
+                                <span class="badge bg-success rounded-circle p-2">
+                                    <i class="fas fa-check"></i>
+                                </span>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="fw-semibold mb-0">Create your account</h6>
+                                <small class="text-muted">Account created and email verified</small>
+                            </div>
+                        </div>
+                        <div class="list-group-item d-flex align-items-center px-0">
+                            <div class="flex-shrink-0">
+                                <span class="badge @(Model.IsProfileComplete ? "bg-success" : "bg-light text-dark") rounded-circle p-2">
+                                    <i class="fas @(Model.IsProfileComplete ? "fa-check" : "fa-user")"></i>
+                                </span>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="fw-semibold mb-0">Complete your profile</h6>
+                                <small class="text-muted">Add your financial information and preferences</small>
+                            </div>
+                            @if (!Model.IsProfileComplete)
+                            {
+                                <div class="flex-shrink-0">
+                                    <a href="@Url.Action("Profile", "Setup")" class="btn btn-sm btn-outline-primary">Complete</a>
+                                </div>
+                            }
+                        </div>
+                        <div class="list-group-item d-flex align-items-center px-0">
+                            <div class="flex-shrink-0">
+                                <span class="badge @(Model.HasAccounts ? "bg-success" : "bg-light text-dark") rounded-circle p-2">
+                                    <i class="fas @(Model.HasAccounts ? "fa-check" : "fa-wallet")"></i>
+                                </span>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="fw-semibold mb-0">Set up your accounts</h6>
+                                <small class="text-muted">Add your financial accounts to track balances</small>
+                            </div>
+                            @if (!Model.HasAccounts)
+                            {
+                                <div class="flex-shrink-0">
+                                    <a href="@Url.Action("Accounts", "Setup")" class="btn btn-sm btn-outline-primary">Start</a>
+                                </div>
+                            }
+                        </div>
+                        <div class="list-group-item d-flex align-items-center px-0">
+                            <div class="flex-shrink-0">
+                                <span class="badge @(Model.HasBudgets ? "bg-success" : "bg-light text-dark") rounded-circle p-2">
+                                    <i class="fas @(Model.HasBudgets ? "fa-check" : "fa-calculator")"></i>
+                                </span>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="fw-semibold mb-0">Create your first budget</h6>
+                                <small class="text-muted">Set up categories and spending limits</small>
+                            </div>
+                            @if (!Model.HasBudgets)
+                            {
+                                <div class="flex-shrink-0">
+                                    <a href="#" class="btn btn-sm btn-outline-primary">Start</a>
+                                </div>
+                            }
+                        </div>
+                        <div class="list-group-item d-flex align-items-center px-0">
+                            <div class="flex-shrink-0">
+                                <span class="badge @(Model.HasTransactions ? "bg-success" : "bg-light text-dark") rounded-circle p-2">
+                                    <i class="fas @(Model.HasTransactions ? "fa-check" : "fa-plus")"></i>
+                                </span>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="fw-semibold mb-0">Add your first transaction</h6>
+                                <small class="text-muted">Record income or expense to see the system in action</small>
+                            </div>
+                            @if (!Model.HasTransactions)
+                            {
+                                <div class="flex-shrink-0">
+                                    <a href="#" class="btn btn-sm btn-outline-primary">Add</a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Activity & Tips -->
+        <div class="col-lg-4">
+            @if (Model.HasTransactions && Model.RecentTransactions.Any())
+            {
+                <div class="card border-0 shadow-sm mb-3">
+                    <div class="card-header bg-white">
+                        <h5 class="fw-bold mb-0">
+                            <i class="fas fa-history me-2"></i>Recent Activity
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        @foreach (var transaction in Model.RecentTransactions.Take(5))
+                        {
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="flex-shrink-0">
+                                    <span class="badge @(transaction.Type == TransactionType.Credit ? "bg-success" : "bg-danger") rounded-circle p-2">
+                                        <i class="fas @(transaction.Type == TransactionType.Credit ? "fa-plus" : "fa-minus")"></i>
+                                    </span>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="fw-semibold mb-0 small">@transaction.Description</h6>
+                                    <small class="text-muted">@transaction.AccountName • @transaction.TransactionDate.ToString("MMM dd")</small>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <span class="fw-bold @(transaction.Type == TransactionType.Credit ? "text-success" : "text-danger")">
+                                        @(transaction.Type == TransactionType.Credit ? "+" : "-")@Model.GetCurrencySymbol()@transaction.Amount.ToString("N2")
+                                    </span>
+                                </div>
+                            </div>
+                        }
+                        <div class="text-center">
+                            <a href="@Url.Action("Index", "Transactions")" class="btn btn-sm btn-outline-primary">
+                                @if (Model.RecentTransactions.Count > 5)
+                                {
+                                    <span>View All Transactions</span>
+                                }
+                                else
+                                {
+                                    <span>View Transaction History</span>
+                                }
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+            
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-lightbulb me-2"></i>Tips & Stats
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.TransactionsThisMonth > 0)
+                    {
+                        <div class="mb-3">
+                            <h6 class="fw-semibold">📊 This Month</h6>
+                            <p class="text-muted small mb-0">
+                                You've recorded <strong>@Model.TransactionsThisMonth transactions</strong> this month. 
+                                @if (Model.ActiveBudgets > 0)
+                                {
+                                    <span>You have <strong>@Model.ActiveBudgets active budget@(Model.ActiveBudgets > 1 ? "s" : "")</strong>.</span>
+                                }
+                            </p>
+                        </div>
+                        <hr>
+                    }
+                    <div class="mb-3">
+                        <h6 class="fw-semibold">💡 Pro Tip</h6>
+                        <p class="text-muted small mb-0">
+                            @if (!Model.HasBudgets)
+                            {
+                                <span>Create budgets to better control your spending and reach your financial goals faster.</span>
+                            }
+                            else if (Model.TransactionsThisMonth < 10)
+                            {
+                                <span>Try to record transactions daily to get the most accurate picture of your finances.</span>
+                            }
+                            else
+                            {
+                                <span>Great job tracking your finances! Review your spending patterns weekly to stay on track.</span>
+                            }
+                        </p>
+                    </div>
+                    @if (!Model.HasBudgets || !Model.HasTransactions)
+                    {
+                        <hr>
+                        <div>
+                            <h6 class="fw-semibold">🎯 Next Step</h6>
+                            <p class="text-muted small mb-0">
+                                @if (!Model.HasBudgets)
+                                {
+                                    <span>Create your first budget to start planning your monthly expenses.</span>
+                                }
+                                else if (!Model.HasTransactions)
+                                {
+                                    <span>Add some transactions to see your financial data come to life.</span>
+                                }
+                            </p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    private string GetAccountIcon(AccountType accountType)
+    {
+        return accountType switch
+        {
+            AccountType.Checking => "fa-university",
+            AccountType.Savings => "fa-piggy-bank",
+            AccountType.CreditCard => "fa-credit-card",
+            AccountType.Investment => "fa-chart-line",
+            AccountType.Cash => "fa-money-bill-wave",
+            AccountType.Loan => "fa-hand-holding-usd",
+            _ => "fa-wallet"
+        };
+    }
+    
+    private string GetCurrencySymbol(Currency currency)
+    {
+        return currency switch
+        {
+            Currency.USD => "$",
+            Currency.EUR => "€",
+            Currency.GBP => "£",
+            Currency.NGN => "₦",
+            Currency.CAD => "C$",
+            Currency.AUD => "A$",
+            Currency.JPY => "¥",
+            Currency.CHF => "Fr",
+            Currency.CNY => "¥",
+            Currency.INR => "₹",
+            _ => "$"
+        };
+    }
+} 

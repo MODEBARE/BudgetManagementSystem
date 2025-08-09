@@ -1,0 +1,227 @@
+@using BudgetSystem.ViewModels
+@using BudgetSystem.Models
+@model CreateAccountViewModel
+@{
+    ViewData["Title"] = "Add New Account";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body bg-primary text-white rounded">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h3 class="fw-bold mb-1">
+                                <i class="fas fa-plus-circle me-2"></i>Add New Account
+                            </h3>
+                            <p class="mb-0 opacity-75">Create a new financial account to track your money</p>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-wallet fa-3x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <form asp-action="Create" method="post" novalidate>
+                        @Html.AntiForgeryToken()
+
+                        <!-- Account Name and Type Row -->
+                        <div class="row mb-3">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label asp-for="Name" class="form-label fw-semibold">
+                                        <i class="fas fa-signature text-primary me-1"></i>
+                                        @Html.DisplayNameFor(m => m.Name)
+                                    </label>
+                                    <input asp-for="Name" class="form-control form-control-lg" placeholder="e.g., Main Checking, Emergency Fund, Credit Card" />
+                                    <span asp-validation-for="Name" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="AccountType" class="form-label fw-semibold">
+                                        <i class="fas fa-tag text-warning me-1"></i>
+                                        @Html.DisplayNameFor(m => m.AccountType)
+                                    </label>
+                                    <select asp-for="AccountType" class="form-select form-select-lg">
+                                        <option value="">-- Select Type --</option>
+                                        @foreach (AccountType type in Enum.GetValues<AccountType>())
+                                        {
+                                            <option value="@((int)type)">@type.ToString()</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="AccountType" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-semibold">
+                                <i class="fas fa-align-left text-info me-1"></i>
+                                @Html.DisplayNameFor(m => m.Description)
+                            </label>
+                            <input asp-for="Description" class="form-control form-control-lg" placeholder="Optional description of this account's purpose" />
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Initial Balance and Currency Row -->
+                        <div class="row mb-3">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label asp-for="InitialBalance" class="form-label fw-semibold">
+                                        <i class="fas fa-dollar-sign text-success me-1"></i>
+                                        @Html.DisplayNameFor(m => m.InitialBalance)
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-success text-white">$</span>
+                                        <input asp-for="InitialBalance" class="form-control form-control-lg" placeholder="0.00" step="0.01" />
+                                    </div>
+                                    <div class="form-text">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Enter the current balance of this account (can be 0 for new accounts)
+                                    </div>
+                                    <span asp-validation-for="InitialBalance" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="Currency" class="form-label fw-semibold">
+                                        <i class="fas fa-coins text-warning me-1"></i>
+                                        @Html.DisplayNameFor(m => m.Currency)
+                                    </label>
+                                    <select asp-for="Currency" class="form-select form-select-lg">
+                                        @foreach (Currency currency in Enum.GetValues<Currency>())
+                                        {
+                                            <option value="@((int)currency)" selected="@(currency == Model.Currency)">
+                                                @currency.ToString() - @GetCurrencyName(currency)
+                                            </option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="Currency" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Account Type Information -->
+                        <div class="alert alert-light border-0 mb-4">
+                            <h6 class="fw-bold">
+                                <i class="fas fa-lightbulb text-warning me-2"></i>Account Types Explained
+                            </h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <ul class="list-unstyled mb-0">
+                                        <li class="mb-2">
+                                            <strong><i class="fas fa-university text-primary me-2"></i>Checking:</strong>
+                                            <small class="text-muted d-block">Daily spending and bill payments</small>
+                                        </li>
+                                        <li class="mb-2">
+                                            <strong><i class="fas fa-piggy-bank text-success me-2"></i>Savings:</strong>
+                                            <small class="text-muted d-block">Emergency funds and goals</small>
+                                        </li>
+                                        <li class="mb-2">
+                                            <strong><i class="fas fa-credit-card text-warning me-2"></i>Credit Card:</strong>
+                                            <small class="text-muted d-block">Credit purchases and payments</small>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <ul class="list-unstyled mb-0">
+                                        <li class="mb-2">
+                                            <strong><i class="fas fa-chart-line text-info me-2"></i>Investment:</strong>
+                                            <small class="text-muted d-block">Stocks, bonds, retirement funds</small>
+                                        </li>
+                                        <li class="mb-2">
+                                            <strong><i class="fas fa-money-bill-wave text-secondary me-2"></i>Cash:</strong>
+                                            <small class="text-muted d-block">Physical cash on hand</small>
+                                        </li>
+                                        <li class="mb-2">
+                                            <strong><i class="fas fa-hand-holding-usd text-danger me-2"></i>Loan:</strong>
+                                            <small class="text-muted d-block">Mortgages, personal loans</small>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Validation Summary -->
+                        <div asp-validation-summary="All" class="alert alert-danger" role="alert"></div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="@Url.Action("Index")" class="btn btn-outline-secondary btn-lg">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Accounts
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg px-4">
+                                <i class="fas fa-plus-circle me-2"></i>Create Account
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tips -->
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-header bg-light">
+                    <h6 class="fw-bold mb-0">
+                        <i class="fas fa-tips text-info me-2"></i>Account Creation Tips
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul class="list-unstyled mb-0">
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    <strong>Use clear names:</strong> "Chase Checking" instead of "Account 1"
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    <strong>Set accurate balances:</strong> Enter your current real balance
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul class="list-unstyled mb-0">
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    <strong>Choose correct type:</strong> This affects reports and categorization
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    <strong>Add descriptions:</strong> Helps identify accounts quickly
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetCurrencyName(Currency currency)
+    {
+        return currency switch
+        {
+            Currency.USD => "US Dollar",
+            Currency.EUR => "Euro",
+            Currency.GBP => "British Pound",
+            Currency.NGN => "Nigerian Naira",
+            Currency.CAD => "Canadian Dollar",
+            Currency.AUD => "Australian Dollar",
+            Currency.JPY => "Japanese Yen",
+            Currency.CHF => "Swiss Franc",
+            Currency.CNY => "Chinese Yuan",
+            Currency.INR => "Indian Rupee",
+            _ => currency.ToString()
+        };
+    }
+} 

@@ -1,0 +1,216 @@
+@model BudgetSystem.ViewModels.RegisterViewModel
+@{
+    ViewData["Title"] = "Create Account";
+}
+
+<div class="container">
+    <div class="row justify-content-center py-5">
+        <div class="col-lg-6 col-md-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-user-plus fa-3x text-primary mb-3"></i>
+                        <h2 class="fw-bold">Create Your Account</h2>
+                        <p class="text-muted">Join thousands managing their finances better</p>
+                    </div>
+
+                    <form asp-action="Register" method="post" id="registerForm">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="FirstName" class="form-label fw-semibold">
+                                    <i class="fas fa-user me-1"></i>First Name
+                                </label>
+                                <input asp-for="FirstName" class="form-control form-control-lg" placeholder="Enter first name" />
+                                <span asp-validation-for="FirstName" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="LastName" class="form-label fw-semibold">
+                                    <i class="fas fa-user me-1"></i>Last Name
+                                </label>
+                                <input asp-for="LastName" class="form-control form-control-lg" placeholder="Enter last name" />
+                                <span asp-validation-for="LastName" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label fw-semibold">
+                                <i class="fas fa-envelope me-1"></i>Email Address
+                            </label>
+                            <input asp-for="Email" class="form-control form-control-lg" placeholder="Enter your email" />
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label fw-semibold">
+                                <i class="fas fa-lock me-1"></i>Password
+                            </label>
+                            <div class="input-group">
+                                <input asp-for="Password" class="form-control form-control-lg" placeholder="Create a strong password" />
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                            <div class="form-text">
+                                <small class="text-muted">
+                                    Must contain at least 8 characters including uppercase, lowercase, number and special character
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ConfirmPassword" class="form-label fw-semibold">
+                                <i class="fas fa-lock me-1"></i>Confirm Password
+                            </label>
+                            <input asp-for="ConfirmPassword" class="form-control form-control-lg" placeholder="Confirm your password" />
+                            <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="UserType" class="form-label fw-semibold">
+                                <i class="fas fa-users me-1"></i>Account Type
+                            </label>
+                            <select asp-for="UserType" class="form-select form-select-lg">
+                                <option value="Individual">Individual User</option>
+                                <option value="SME">Small & Medium Enterprise</option>
+                            </select>
+                            <span asp-validation-for="UserType" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3" id="companyNameGroup" style="display: none;">
+                            <label asp-for="CompanyName" class="form-label fw-semibold">
+                                <i class="fas fa-building me-1"></i>Company Name
+                            </label>
+                            <input asp-for="CompanyName" class="form-control form-control-lg" placeholder="Enter company name" />
+                            <span asp-validation-for="CompanyName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input asp-for="AgreeToTerms" class="form-check-input" />
+                                <label asp-for="AgreeToTerms" class="form-check-label">
+                                    I agree to the <a href="#" class="text-primary">Terms and Conditions</a> and <a href="#" class="text-primary">Privacy Policy</a>
+                                </label>
+                                <span asp-validation-for="AgreeToTerms" class="text-danger small d-block"></span>
+                            </div>
+                        </div>
+
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-user-plus me-2"></i>Create Account
+                            </button>
+                        </div>
+
+                        <div class="text-center">
+                            <p class="mb-0">
+                                Already have an account? 
+                                <a asp-controller="Account" asp-action="Login" class="text-primary fw-semibold text-decoration-none">Sign In</a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <p class="small text-muted">
+                    <i class="fas fa-shield-alt me-1"></i>
+                    Your information is secure and encrypted. We never share your data.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        // Toggle password visibility
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('Password');
+            const icon = this.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+
+        // Show/hide company name field based on user type
+        document.getElementById('UserType').addEventListener('change', function() {
+            const companyNameGroup = document.getElementById('companyNameGroup');
+            const companyNameInput = document.getElementById('CompanyName');
+            
+            if (this.value === 'SME') {
+                companyNameGroup.style.display = 'block';
+                companyNameInput.required = true;
+            } else {
+                companyNameGroup.style.display = 'none';
+                companyNameInput.required = false;
+                companyNameInput.value = '';
+            }
+        });
+
+        // Password strength indicator
+        document.getElementById('Password').addEventListener('input', function() {
+            const password = this.value;
+            const strengthMeter = document.getElementById('passwordStrength');
+            
+            // Remove existing strength meter if present
+            if (strengthMeter) {
+                strengthMeter.remove();
+            }
+            
+            if (password.length > 0) {
+                let strength = 0;
+                let strengthText = '';
+                let strengthClass = '';
+                
+                // Check password criteria
+                if (password.length >= 8) strength++;
+                if (/[a-z]/.test(password)) strength++;
+                if (/[A-Z]/.test(password)) strength++;
+                if (/[0-9]/.test(password)) strength++;
+                if (/[^A-Za-z0-9]/.test(password)) strength++;
+                
+                switch (strength) {
+                    case 0:
+                    case 1:
+                        strengthText = 'Very Weak';
+                        strengthClass = 'text-danger';
+                        break;
+                    case 2:
+                        strengthText = 'Weak';
+                        strengthClass = 'text-warning';
+                        break;
+                    case 3:
+                        strengthText = 'Fair';
+                        strengthClass = 'text-info';
+                        break;
+                    case 4:
+                        strengthText = 'Good';
+                        strengthClass = 'text-success';
+                        break;
+                    case 5:
+                        strengthText = 'Strong';
+                        strengthClass = 'text-success fw-bold';
+                        break;
+                }
+                
+                const strengthDiv = document.createElement('div');
+                strengthDiv.id = 'passwordStrength';
+                strengthDiv.className = `small mt-1 ${strengthClass}`;
+                strengthDiv.innerHTML = `Password Strength: ${strengthText}`;
+                
+                this.parentNode.parentNode.appendChild(strengthDiv);
+            }
+        });
+    </script>
+} 

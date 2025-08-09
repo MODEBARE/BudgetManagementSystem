@@ -1,0 +1,116 @@
+@model BudgetSystem.ViewModels.CreateAccountViewModel
+@{
+    ViewData["Title"] = "Create Custom Account";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-plus-circle me-2"></i>
+                        Create Custom Account
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="CreateAccount" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label"></label>
+                            <input asp-for="Name" class="form-control" placeholder="e.g., My Investment Account" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="AccountType" class="form-label"></label>
+                            <select asp-for="AccountType" class="form-select">
+                                <option value="0">Checking Account</option>
+                                <option value="1">Savings Account</option>
+                                <option value="2">Credit Card</option>
+                                <option value="3">Investment Account</option>
+                                <option value="4">Cash Account</option>
+                                <option value="5">Loan Account</option>
+                                <option value="6">Other</option>
+                            </select>
+                            <span asp-validation-for="AccountType" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="InitialBalance" class="form-label"></label>
+                            <div class="input-group">
+                                <span class="input-group-text" id="currency-symbol">$</span>
+                                <input asp-for="InitialBalance" class="form-control" type="number" step="0.01" placeholder="0.00" />
+                            </div>
+                            <span asp-validation-for="InitialBalance" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Currency" class="form-label"></label>
+                            <select asp-for="Currency" class="form-select" id="currency-select">
+                                <option value="0">USD - US Dollar</option>
+                                <option value="1">EUR - Euro</option>
+                                <option value="2">GBP - British Pound</option>
+                                <option value="3">NGN - Nigerian Naira</option>
+                                <option value="4">CAD - Canadian Dollar</option>
+                                <option value="5">AUD - Australian Dollar</option>
+                                <option value="6">JPY - Japanese Yen</option>
+                                <option value="7">CHF - Swiss Franc</option>
+                                <option value="8">CNY - Chinese Yuan</option>
+                                <option value="9">INR - Indian Rupee</option>
+                            </select>
+                            <span asp-validation-for="Currency" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label"></label>
+                            <textarea asp-for="Description" class="form-control" rows="3" placeholder="Optional description of this account"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                            <a asp-action="Accounts" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Setup
+                            </a>
+                            <button type="submit" class="btn btn-success px-4">
+                                <i class="fas fa-save me-2"></i>Create Account
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function() {
+            // Update currency symbol when currency changes
+            $('#currency-select').change(function() {
+                var selectedValue = $(this).val();
+                var symbol = '$'; // Default
+                
+                switch(selectedValue) {
+                    case '0': symbol = '$'; break;   // USD
+                    case '1': symbol = '€'; break;   // EUR
+                    case '2': symbol = '£'; break;   // GBP
+                    case '3': symbol = '₦'; break;   // NGN
+                    case '4': symbol = 'C$'; break;  // CAD
+                    case '5': symbol = 'A$'; break;  // AUD
+                    case '6': symbol = '¥'; break;   // JPY
+                    case '7': symbol = 'CHF'; break; // CHF
+                    case '8': symbol = '¥'; break;   // CNY
+                    case '9': symbol = '₹'; break;   // INR
+                }
+                
+                $('#currency-symbol').text(symbol);
+            });
+            
+            // Set initial symbol
+            $('#currency-select').trigger('change');
+        });
+    </script>
+} 

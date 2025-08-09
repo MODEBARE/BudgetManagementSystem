@@ -1,0 +1,335 @@
+@using BudgetSystem.Models.ViewModels
+@model ExpenseTransactionViewModel
+@{
+    ViewData["Title"] = "Add Expense";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body bg-danger text-white rounded">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h3 class="fw-bold mb-1">
+                                <i class="fas fa-minus-circle me-2"></i>Add Expense
+                            </h3>
+                            <p class="mb-0 opacity-75">Track your spending and expenses</p>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-receipt fa-3x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <form asp-action="AddExpense" method="post" enctype="multipart/form-data" novalidate>
+                        @Html.AntiForgeryToken()
+                        
+                        <!-- Amount and Date Row -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Amount" class="form-label fw-semibold">
+                                        <i class="fas fa-dollar-sign text-danger me-1"></i>
+                                        @Html.DisplayNameFor(m => m.Amount)
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-danger text-white">@Model.GetCurrencySymbol()</span>
+                                        <input asp-for="Amount" class="form-control form-control-lg" placeholder="0.00" step="0.01" />
+                                    </div>
+                                    <span asp-validation-for="Amount" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="TransactionDate" class="form-label fw-semibold">
+                                        <i class="fas fa-calendar text-primary me-1"></i>
+                                        @Html.DisplayNameFor(m => m.TransactionDate)
+                                    </label>
+                                    <input asp-for="TransactionDate" class="form-control form-control-lg" type="date" />
+                                    <span asp-validation-for="TransactionDate" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-semibold">
+                                <i class="fas fa-edit text-info me-1"></i>
+                                @Html.DisplayNameFor(m => m.Description)
+                            </label>
+                            <input asp-for="Description" class="form-control form-control-lg" placeholder="e.g., Grocery shopping, Gas bill, Restaurant dinner" />
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Category and Account Row -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Category" class="form-label fw-semibold">
+                                        <i class="fas fa-tags text-warning me-1"></i>
+                                        @Html.DisplayNameFor(m => m.Category)
+                                    </label>
+                                    <select asp-for="Category" asp-items="Model.Categories" class="form-select form-select-lg">
+                                        <option value="">-- Select Expense Category --</option>
+                                    </select>
+                                    <span asp-validation-for="Category" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="AccountId" class="form-label fw-semibold">
+                                        <i class="fas fa-credit-card text-primary me-1"></i>
+                                        @Html.DisplayNameFor(m => m.AccountId)
+                                    </label>
+                                    <select asp-for="AccountId" asp-items="Model.Accounts" class="form-select form-select-lg">
+                                        <option value="">-- Select Payment Account --</option>
+                                    </select>
+                                    <span asp-validation-for="AccountId" class="text-danger small"></span>
+                                    <div class="form-text">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Choose the account you paid from
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Reference -->
+                        <div class="mb-3">
+                            <label asp-for="Reference" class="form-label fw-semibold">
+                                <i class="fas fa-hashtag text-secondary me-1"></i>
+                                @Html.DisplayNameFor(m => m.Reference)
+                            </label>
+                            <input asp-for="Reference" class="form-control" placeholder="e.g., Receipt #12345, Transaction ID, Invoice number" />
+                            <span asp-validation-for="Reference" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="mb-3">
+                            <label asp-for="Notes" class="form-label fw-semibold">
+                                <i class="fas fa-sticky-note text-info me-1"></i>
+                                @Html.DisplayNameFor(m => m.Notes)
+                            </label>
+                            <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Additional details about this expense..."></textarea>
+                            <span asp-validation-for="Notes" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Receipt Upload -->
+                        <div class="mb-3">
+                            <label asp-for="ReceiptFile" class="form-label fw-semibold">
+                                <i class="fas fa-paperclip text-secondary me-1"></i>
+                                @Html.DisplayNameFor(m => m.ReceiptFile)
+                            </label>
+                            <input asp-for="ReceiptFile" type="file" class="form-control" accept=".jpg,.jpeg,.png,.pdf,.gif" />
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Upload your receipt or proof of purchase (JPG, PNG, PDF, GIF - max 5MB)
+                            </div>
+                            <span asp-validation-for="ReceiptFile" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Recurring Option -->
+                        <div class="mb-4">
+                            <div class="form-check form-check-lg">
+                                <input asp-for="IsRecurring" class="form-check-input" type="checkbox" />
+                                <label asp-for="IsRecurring" class="form-check-label fw-semibold">
+                                    <i class="fas fa-repeat text-primary me-1"></i>
+                                    @Html.DisplayNameFor(m => m.IsRecurring)
+                                </label>
+                                <div class="form-text">Check this if this is a regular recurring expense (e.g., monthly utility bill)</div>
+                            </div>
+                        </div>
+
+                        <!-- Validation Summary -->
+                        <div asp-validation-summary="All" class="alert alert-danger" role="alert"></div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="@Url.Action("Index", "Dashboard")" class="btn btn-outline-secondary btn-lg">
+                                <i class="fas fa-arrow-left me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-danger btn-lg px-4">
+                                <i class="fas fa-minus-circle me-2"></i>Record Expense
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Quick Tips -->
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-header bg-light">
+                    <h6 class="fw-bold mb-0">
+                        <i class="fas fa-lightbulb text-warning me-2"></i>Tips for Recording Expenses
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul class="list-unstyled mb-0">
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    <strong>Be detailed:</strong> Include vendor name and purpose
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    <strong>Keep receipts:</strong> Upload photos for record-keeping
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    <strong>Categorize properly:</strong> Helps with budget tracking
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul class="list-unstyled mb-0">
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    <strong>Check balances:</strong> Ensure sufficient funds before spending
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    <strong>Record promptly:</strong> Add expenses as soon as possible
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    <strong>Use correct account:</strong> Match the payment method used
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            // Auto-focus on amount field
+            $('#Amount').focus();
+            
+            // Format amount input and check balance
+            $('#Amount, #AccountId').on('change input', function() {
+                validateAmount();
+            });
+            
+            function validateAmount() {
+                const amount = parseFloat($('#Amount').val()) || 0;
+                const accountSelect = $('#AccountId');
+                const selectedAccount = accountSelect.find('option:selected').text();
+                
+                if (amount > 0 && selectedAccount && selectedAccount.includes('(')) {
+                    // Extract balance from account text: "Account Name ($1,000.00)"
+                    const balanceMatch = selectedAccount.match(/\(([^)]+)\)/);
+                    if (balanceMatch) {
+                        const balanceText = balanceMatch[1].replace(/[^\d.-]/g, '');
+                        const balance = parseFloat(balanceText);
+                        
+                        // Only check for non-credit card accounts (basic validation)
+                        if (!selectedAccount.toLowerCase().includes('credit') && amount > balance) {
+                            $('#Amount').addClass('is-invalid');
+                            if (!$('#insufficient-funds-warning').length) {
+                                $('#Amount').after('<div id="insufficient-funds-warning" class="text-warning small mt-1"><i class="fas fa-exclamation-triangle me-1"></i>Amount exceeds available balance</div>');
+                            }
+                        } else {
+                            $('#Amount').removeClass('is-invalid');
+                            $('#insufficient-funds-warning').remove();
+                        }
+                    }
+                }
+            }
+            
+            // Enhanced form validation
+            $('form').on('submit', function() {
+                let isValid = true;
+                
+                // Check required fields
+                $('input[required], select[required]').each(function() {
+                    if (!$(this).val()) {
+                        $(this).addClass('is-invalid');
+                        isValid = false;
+                    } else {
+                        $(this).removeClass('is-invalid');
+                    }
+                });
+                
+                if (!isValid) {
+                    $('html, body').animate({
+                        scrollTop: $('.is-invalid').first().offset().top - 100
+                    }, 500);
+                    return false;
+                }
+                
+                // Show loading state
+                $(this).find('button[type="submit"]').prop('disabled', true)
+                    .html('<i class="fas fa-spinner fa-spin me-2"></i>Recording Expense...');
+            });
+            
+            // File upload validation
+            $('#ReceiptFile').on('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'application/pdf'];
+                    const maxSize = 5 * 1024 * 1024; // 5MB
+                    
+                    if (!validTypes.includes(file.type)) {
+                        $(this).addClass('is-invalid');
+                        $(this).next('.form-text').text('Invalid file type. Please select JPG, PNG, PDF, or GIF.');
+                        return;
+                    }
+                    
+                    if (file.size > maxSize) {
+                        $(this).addClass('is-invalid');
+                        $(this).next('.form-text').text('File size too large. Maximum 5MB allowed.');
+                        return;
+                    }
+                    
+                    $(this).removeClass('is-invalid');
+                    $(this).next('.form-text').html(`<i class="fas fa-check text-success me-1"></i>Receipt uploaded: ${file.name}`);
+                }
+            });
+            
+            // Category-specific tips
+            $('#Category').on('change', function() {
+                const category = $(this).val();
+                let tip = '';
+                
+                switch(category) {
+                    case 'Food & Dining':
+                        tip = 'Consider meal planning to reduce food expenses';
+                        break;
+                    case 'Transportation':
+                        tip = 'Track mileage for potential tax deductions';
+                        break;
+                    case 'Utilities':
+                        tip = 'Monitor usage to identify saving opportunities';
+                        break;
+                    case 'Healthcare':
+                        tip = 'Keep receipts for insurance reimbursements';
+                        break;
+                    case 'Entertainment':
+                        tip = 'Set a monthly entertainment budget to stay on track';
+                        break;
+                }
+                
+                if (tip) {
+                    if (!$('#category-tip').length) {
+                        $(this).after('<div id="category-tip" class="form-text text-info mt-1"></div>');
+                    }
+                    $('#category-tip').html(`<i class="fas fa-lightbulb me-1"></i>${tip}`);
+                } else {
+                    $('#category-tip').remove();
+                }
+            });
+        });
+    </script>
+} 

@@ -1,0 +1,204 @@
+@model BudgetSystem.ViewModels.AccountSetupViewModel
+@{
+    ViewData["Title"] = "Set Up Your Accounts";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-university me-2"></i>
+                        Set Up Your Financial Accounts
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Let's set up your accounts to start tracking your finances. You can add more accounts later.
+                    </div>
+
+                    <form asp-action="Accounts" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <div class="mb-4">
+                            <h5 class="text-secondary border-bottom pb-2">Choose Your Starting Accounts</h5>
+                            <p class="text-muted">Select the accounts you want to create and customize their details.</p>
+                        </div>
+
+                        @for (int i = 0; i < Model.Accounts.Count; i++)
+                        {
+                            <div class="card mb-3 border-2" id="account-@i">
+                                <div class="card-header bg-light">
+                                    <div class="form-check">
+                                        <input asp-for="Accounts[i].IsSelected" class="form-check-input account-checkbox" type="checkbox" 
+                                               data-target="account-details-@i" checked="@Model.Accounts[i].IsSelected" />
+                                        <input asp-for="Accounts[i].AccountType" type="hidden" />
+                                        <label class="form-check-label fw-bold">
+                                            <i class="fas @GetAccountIcon(Model.Accounts[i].AccountType) me-2"></i>
+                                            @Model.Accounts[i].AccountType Account
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="card-body account-details" id="account-details-@i" style="@(Model.Accounts[i].IsSelected ? "" : "display: none;")">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label asp-for="Accounts[i].Name" class="form-label"></label>
+                                            <input asp-for="Accounts[i].Name" class="form-control" placeholder="Enter account name" />
+                                            <span asp-validation-for="Accounts[i].Name" class="text-danger"></span>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label asp-for="Accounts[i].InitialBalance" class="form-label"></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">@GetCurrencySymbol(Model.Accounts[i].Currency)</span>
+                                                <input asp-for="Accounts[i].InitialBalance" class="form-control" type="number" step="0.01" placeholder="0.00" />
+                                            </div>
+                                            <span asp-validation-for="Accounts[i].InitialBalance" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label asp-for="Accounts[i].Currency" class="form-label"></label>
+                                            <select asp-for="Accounts[i].Currency" class="form-select">
+                                                <option value="0">USD - US Dollar</option>
+                                                <option value="1">EUR - Euro</option>
+                                                <option value="2">GBP - British Pound</option>
+                                                <option value="3">NGN - Nigerian Naira</option>
+                                                <option value="4">CAD - Canadian Dollar</option>
+                                                <option value="5">AUD - Australian Dollar</option>
+                                                <option value="6">JPY - Japanese Yen</option>
+                                                <option value="7">CHF - Swiss Franc</option>
+                                                <option value="8">CNY - Chinese Yuan</option>
+                                                <option value="9">INR - Indian Rupee</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label asp-for="Accounts[i].Description" class="form-label"></label>
+                                            <input asp-for="Accounts[i].Description" class="form-control" placeholder="Optional description" />
+                                            <span asp-validation-for="Accounts[i].Description" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="account-info">
+                                        <small class="text-muted">
+                                            <i class="fas fa-lightbulb me-1"></i>
+                                            @GetAccountDescription(Model.Accounts[i].AccountType)
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                        <div class="mt-4">
+                            <div class="alert alert-light border">
+                                <div class="row align-items-center">
+                                    <div class="col">
+                                        <i class="fas fa-plus-circle text-success me-2"></i>
+                                        <strong>Want to add more account types?</strong>
+                                        <br>
+                                        <small class="text-muted">You can add Investment, Cash, Loan, and other account types from your dashboard later.</small>
+                                    </div>
+                                    <div class="col-auto">
+                                        <a asp-action="CreateAccount" class="btn btn-outline-success btn-sm">
+                                            <i class="fas fa-plus me-1"></i>Add Custom Account
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-between mt-4">
+                            <a asp-action="Profile" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Profile
+                            </a>
+                            <button type="submit" class="btn btn-success px-4">
+                                <i class="fas fa-check me-2"></i>Create Selected Accounts
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function() {
+            // Handle account selection
+            $('.account-checkbox').change(function() {
+                var target = $(this).data('target');
+                var detailsDiv = $('#' + target);
+                
+                if ($(this).is(':checked')) {
+                    detailsDiv.slideDown();
+                    detailsDiv.closest('.card').removeClass('border-secondary').addClass('border-success');
+                } else {
+                    detailsDiv.slideUp();
+                    detailsDiv.closest('.card').removeClass('border-success').addClass('border-secondary');
+                }
+            });
+
+            // Initialize card styling based on selection
+            $('.account-checkbox').each(function() {
+                var target = $(this).data('target');
+                var card = $('#' + target).closest('.card');
+                
+                if ($(this).is(':checked')) {
+                    card.addClass('border-success');
+                } else {
+                    card.addClass('border-secondary');
+                }
+            });
+        });
+    </script>
+}
+
+@functions {
+    private string GetAccountIcon(BudgetSystem.Models.AccountType accountType)
+    {
+        return accountType switch
+        {
+            BudgetSystem.Models.AccountType.Checking => "fa-university",
+            BudgetSystem.Models.AccountType.Savings => "fa-piggy-bank",
+            BudgetSystem.Models.AccountType.CreditCard => "fa-credit-card",
+            BudgetSystem.Models.AccountType.Investment => "fa-chart-line",
+            BudgetSystem.Models.AccountType.Cash => "fa-wallet",
+            BudgetSystem.Models.AccountType.Loan => "fa-hand-holding-usd",
+            _ => "fa-university"
+        };
+    }
+
+    private string GetAccountDescription(BudgetSystem.Models.AccountType accountType)
+    {
+        return accountType switch
+        {
+            BudgetSystem.Models.AccountType.Checking => "Your primary account for daily transactions and bill payments.",
+            BudgetSystem.Models.AccountType.Savings => "Set aside money for emergencies and future goals.",
+            BudgetSystem.Models.AccountType.CreditCard => "Track credit card balances and payments.",
+            BudgetSystem.Models.AccountType.Investment => "Monitor your investment portfolio and returns.",
+            BudgetSystem.Models.AccountType.Cash => "Physical cash and petty cash transactions.",
+            BudgetSystem.Models.AccountType.Loan => "Track loan balances and repayment progress.",
+            _ => "Manage your financial transactions and balances."
+        };
+    }
+
+    private string GetCurrencySymbol(BudgetSystem.Models.Currency currency)
+    {
+        return currency switch
+        {
+            BudgetSystem.Models.Currency.USD => "$",
+            BudgetSystem.Models.Currency.EUR => "€",
+            BudgetSystem.Models.Currency.GBP => "£",
+            BudgetSystem.Models.Currency.NGN => "₦",
+            BudgetSystem.Models.Currency.CAD => "C$",
+            BudgetSystem.Models.Currency.AUD => "A$",
+            BudgetSystem.Models.Currency.JPY => "¥",
+            BudgetSystem.Models.Currency.CHF => "CHF",
+            BudgetSystem.Models.Currency.CNY => "¥",
+            BudgetSystem.Models.Currency.INR => "₹",
+            _ => "$"
+        };
+    }
+} 

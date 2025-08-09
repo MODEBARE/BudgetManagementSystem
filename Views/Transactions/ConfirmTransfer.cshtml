@@ -1,0 +1,184 @@
+@using BudgetSystem.ViewModels
+@model TransferConfirmationViewModel
+@{
+    ViewData["Title"] = "Confirm Transfer";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body bg-warning text-dark rounded">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h3 class="fw-bold mb-1">
+                                <i class="fas fa-exclamation-triangle me-2"></i>Confirm Transfer
+                            </h3>
+                            <p class="mb-0 opacity-75">Please review and confirm the transfer details</p>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clipboard-check fa-3x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transfer Summary -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-exchange-alt text-primary me-2"></i>Transfer Summary
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- From Account -->
+                        <div class="col-md-5">
+                            <div class="text-center p-3 border rounded bg-light">
+                                <i class="fas fa-arrow-up fa-2x text-danger mb-2"></i>
+                                <h6 class="fw-bold">From Account</h6>
+                                <p class="mb-1 h5">@Model.SourceAccountName</p>
+                                <small class="text-muted">Current Balance:</small>
+                                <div class="h6 mb-2">$@Model.SourceAccountCurrentBalance.ToString("N2")</div>
+                                <small class="text-muted">After Transfer:</small>
+                                <div class="h5 text-danger">$@Model.SourceAccountNewBalance.ToString("N2")</div>
+                            </div>
+                        </div>
+
+                        <!-- Transfer Arrow -->
+                        <div class="col-md-2 d-flex align-items-center justify-content-center">
+                            <div class="text-center">
+                                <i class="fas fa-arrow-right fa-2x text-primary"></i>
+                                <div class="mt-2">
+                                    <strong class="h5 text-primary">$@Model.Transfer.Amount.ToString("N2")</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- To Account -->
+                        <div class="col-md-5">
+                            <div class="text-center p-3 border rounded bg-light">
+                                <i class="fas fa-arrow-down fa-2x text-success mb-2"></i>
+                                <h6 class="fw-bold">To Account</h6>
+                                <p class="mb-1 h5">@Model.DestinationAccountName</p>
+                                <small class="text-muted">Current Balance:</small>
+                                <div class="h6 mb-2">$@Model.DestinationAccountCurrentBalance.ToString("N2")</div>
+                                <small class="text-muted">After Transfer:</small>
+                                <div class="h5 text-success">$@Model.DestinationAccountNewBalance.ToString("N2")</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transfer Details -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-info-circle text-info me-2"></i>Transfer Details
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label text-muted small">Transfer Amount</label>
+                                <div class="h5 text-primary">$@Model.Transfer.Amount.ToString("N2")</div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-muted small">Transfer Fee</label>
+                                <div class="h6">$@Model.Transfer.TransferFee.ToString("N2")</div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-muted small">Total Deduction</label>
+                                <div class="h5 text-danger">$@Model.Transfer.TotalDeduction.ToString("N2")</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label text-muted small">Transfer Date</label>
+                                <div class="h6">@Model.Transfer.TransferDate.ToString("MMMM dd, yyyy")</div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-muted small">Category</label>
+                                <div class="h6">@Model.Transfer.Category</div>
+                            </div>
+                            @if (!string.IsNullOrEmpty(Model.Transfer.Reference))
+                            {
+                                <div class="mb-3">
+                                    <label class="form-label text-muted small">Reference</label>
+                                    <div class="h6">@Model.Transfer.Reference</div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted small">Description</label>
+                        <div class="h6">@Model.Transfer.Description</div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Transfer.Notes))
+                    {
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Notes</label>
+                            <div class="text-muted">@Model.Transfer.Notes</div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Warning Box -->
+            <div class="alert alert-warning border-0 mb-4">
+                <div class="d-flex">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-exclamation-triangle fa-lg"></i>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="alert-heading fw-bold">Important Notice</h6>
+                        <p class="mb-0">
+                            Please verify all transfer details carefully. Once confirmed, this transfer will be processed immediately and cannot be undone automatically.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="@Url.Action("Transfer")" class="btn btn-outline-secondary btn-lg">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Edit
+                </a>
+                
+                <form asp-action="ConfirmTransfer" method="post" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    
+                    <!-- Hidden fields to maintain transfer data -->
+                    <input type="hidden" asp-for="Transfer.Amount" />
+                    <input type="hidden" asp-for="Transfer.SourceAccountId" />
+                    <input type="hidden" asp-for="Transfer.DestinationAccountId" />
+                    <input type="hidden" asp-for="Transfer.TransferDate" />
+                    <input type="hidden" asp-for="Transfer.Description" />
+                    <input type="hidden" asp-for="Transfer.Reference" />
+                    <input type="hidden" asp-for="Transfer.Category" />
+                    <input type="hidden" asp-for="Transfer.Notes" />
+                    <input type="hidden" asp-for="Transfer.TransferFee" />
+                    
+                    <button type="submit" class="btn btn-success btn-lg px-4">
+                        <i class="fas fa-check-circle me-2"></i>Confirm & Execute Transfer
+                    </button>
+                </form>
+            </div>
+
+            <!-- Security Notice -->
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-body text-center">
+                    <div class="text-muted">
+                        <i class="fas fa-shield-alt me-2"></i>
+                        <small>This transfer is secured and will be recorded in your transaction history</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

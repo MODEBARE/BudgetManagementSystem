@@ -1,0 +1,164 @@
+@model BudgetSystem.ViewModels.ProfileSetupViewModel
+@{
+    ViewData["Title"] = "Complete Your Profile";
+    bool isProfileComplete = ViewBag.IsProfileComplete ?? false;
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-user-edit me-2"></i>
+                        @if (isProfileComplete)
+                        {
+                            @:Update Your Profile
+                        }
+                        else
+                        {
+                            @:Complete Your Profile Setup
+                        }
+                    </h4>
+                </div>
+                <div class="card-body">
+                    @if (!isProfileComplete)
+                    {
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Let's complete your profile to personalize your Budget System experience.
+                        </div>
+                    }
+
+                    <form asp-action="Profile" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <!-- Contact Information -->
+                        <div class="mb-4">
+                            <h5 class="text-secondary border-bottom pb-2">Contact Information</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="PhoneNumber" class="form-label"></label>
+                                    <input asp-for="PhoneNumber" class="form-control" placeholder="e.g., +1 234 567 8900" />
+                                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="Country" class="form-label"></label>
+                                    <select asp-for="Country" class="form-select">
+                                        <option value="">Select Country</option>
+                                        <option value="United States">United States</option>
+                                        <option value="Canada">Canada</option>
+                                        <option value="United Kingdom">United Kingdom</option>
+                                        <option value="Nigeria">Nigeria</option>
+                                        <option value="South Africa">South Africa</option>
+                                        <option value="Australia">Australia</option>
+                                        <option value="Germany">Germany</option>
+                                        <option value="France">France</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                    <span asp-validation-for="Country" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Address Information -->
+                        <div class="mb-4">
+                            <h5 class="text-secondary border-bottom pb-2">Address Information (Optional)</h5>
+                            <div class="mb-3">
+                                <label asp-for="Address" class="form-label"></label>
+                                <input asp-for="Address" class="form-control" placeholder="Street address" />
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label asp-for="City" class="form-label"></label>
+                                    <input asp-for="City" class="form-control" placeholder="City" />
+                                    <span asp-validation-for="City" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label asp-for="State" class="form-label"></label>
+                                    <input asp-for="State" class="form-control" placeholder="State/Province" />
+                                    <span asp-validation-for="State" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label asp-for="PostalCode" class="form-label"></label>
+                                    <input asp-for="PostalCode" class="form-control" placeholder="Postal/Zip Code" />
+                                    <span asp-validation-for="PostalCode" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Financial Preferences -->
+                        <div class="mb-4">
+                            <h5 class="text-secondary border-bottom pb-2">Financial Preferences</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="PreferredCurrency" class="form-label"></label>
+                                    <select asp-for="PreferredCurrency" class="form-select">
+                                        <option value="0">USD - US Dollar</option>
+                                        <option value="1">EUR - Euro</option>
+                                        <option value="2">GBP - British Pound</option>
+                                        <option value="3">NGN - Nigerian Naira</option>
+                                        <option value="4">CAD - Canadian Dollar</option>
+                                        <option value="5">AUD - Australian Dollar</option>
+                                        <option value="6">JPY - Japanese Yen</option>
+                                        <option value="7">CHF - Swiss Franc</option>
+                                        <option value="8">CNY - Chinese Yuan</option>
+                                        <option value="9">INR - Indian Rupee</option>
+                                    </select>
+                                    <span asp-validation-for="PreferredCurrency" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="MonthlyIncome" class="form-label"></label>
+                                    <input asp-for="MonthlyIncome" class="form-control" type="number" step="0.01" placeholder="Optional" />
+                                    <span asp-validation-for="MonthlyIncome" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notification Preferences -->
+                        <div class="mb-4">
+                            <h5 class="text-secondary border-bottom pb-2">Notification Preferences</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-check">
+                                        <input asp-for="EnableBudgetAlerts" class="form-check-input" type="checkbox" />
+                                        <label asp-for="EnableBudgetAlerts" class="form-check-label"></label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-check">
+                                        <input asp-for="EnableEmailNotifications" class="form-check-input" type="checkbox" />
+                                        <label asp-for="EnableEmailNotifications" class="form-check-label"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            @if (isProfileComplete)
+                            {
+                                <a asp-controller="Dashboard" asp-action="Index" class="btn btn-secondary me-md-2">Cancel</a>
+                            }
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="fas fa-save me-2"></i>
+                                @if (isProfileComplete)
+                                {
+                                    @:Update Profile
+                                }
+                                else
+                                {
+                                    @:Complete Setup
+                                }
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+} 

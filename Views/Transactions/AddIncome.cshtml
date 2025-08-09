@@ -1,0 +1,267 @@
+@using BudgetSystem.Models.ViewModels
+@model IncomeTransactionViewModel
+@{
+    ViewData["Title"] = "Add Income";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body bg-success text-white rounded">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h3 class="fw-bold mb-1">
+                                <i class="fas fa-plus-circle me-2"></i>Add Income
+                            </h3>
+                            <p class="mb-0 opacity-75">Record your earnings and income sources</p>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-money-bill-wave fa-3x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <form asp-action="AddIncome" method="post" enctype="multipart/form-data" novalidate>
+                        @Html.AntiForgeryToken()
+                        
+                        <!-- Amount and Date Row -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Amount" class="form-label fw-semibold">
+                                        <i class="fas fa-dollar-sign text-success me-1"></i>
+                                        @Html.DisplayNameFor(m => m.Amount)
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-success text-white">@Model.GetCurrencySymbol()</span>
+                                        <input asp-for="Amount" class="form-control form-control-lg" placeholder="0.00" step="0.01" />
+                                    </div>
+                                    <span asp-validation-for="Amount" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="TransactionDate" class="form-label fw-semibold">
+                                        <i class="fas fa-calendar text-primary me-1"></i>
+                                        @Html.DisplayNameFor(m => m.TransactionDate)
+                                    </label>
+                                    <input asp-for="TransactionDate" class="form-control form-control-lg" type="date" />
+                                    <span asp-validation-for="TransactionDate" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-semibold">
+                                <i class="fas fa-edit text-info me-1"></i>
+                                @Html.DisplayNameFor(m => m.Description)
+                            </label>
+                            <input asp-for="Description" class="form-control form-control-lg" placeholder="e.g., Monthly salary, Freelance project payment" />
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Category and Account Row -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Category" class="form-label fw-semibold">
+                                        <i class="fas fa-tags text-warning me-1"></i>
+                                        @Html.DisplayNameFor(m => m.Category)
+                                    </label>
+                                    <select asp-for="Category" asp-items="Model.Categories" class="form-select form-select-lg">
+                                        <option value="">-- Select Income Category --</option>
+                                    </select>
+                                    <span asp-validation-for="Category" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="AccountId" class="form-label fw-semibold">
+                                        <i class="fas fa-university text-primary me-1"></i>
+                                        @Html.DisplayNameFor(m => m.AccountId)
+                                    </label>
+                                    <select asp-for="AccountId" asp-items="Model.Accounts" class="form-select form-select-lg">
+                                        <option value="">-- Select Account --</option>
+                                    </select>
+                                    <span asp-validation-for="AccountId" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Reference -->
+                        <div class="mb-3">
+                            <label asp-for="Reference" class="form-label fw-semibold">
+                                <i class="fas fa-hashtag text-secondary me-1"></i>
+                                @Html.DisplayNameFor(m => m.Reference)
+                            </label>
+                            <input asp-for="Reference" class="form-control" placeholder="e.g., Invoice #INV-2024-001, Payroll reference" />
+                            <span asp-validation-for="Reference" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="mb-3">
+                            <label asp-for="Notes" class="form-label fw-semibold">
+                                <i class="fas fa-sticky-note text-info me-1"></i>
+                                @Html.DisplayNameFor(m => m.Notes)
+                            </label>
+                            <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Additional details about this income..."></textarea>
+                            <span asp-validation-for="Notes" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Receipt Upload -->
+                        <div class="mb-3">
+                            <label asp-for="ReceiptFile" class="form-label fw-semibold">
+                                <i class="fas fa-paperclip text-secondary me-1"></i>
+                                @Html.DisplayNameFor(m => m.ReceiptFile)
+                            </label>
+                            <input asp-for="ReceiptFile" type="file" class="form-control" accept=".jpg,.jpeg,.png,.pdf,.gif" />
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Supported formats: JPG, PNG, PDF, GIF (max 5MB)
+                            </div>
+                            <span asp-validation-for="ReceiptFile" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Recurring Option -->
+                        <div class="mb-4">
+                            <div class="form-check form-check-lg">
+                                <input asp-for="IsRecurring" class="form-check-input" type="checkbox" />
+                                <label asp-for="IsRecurring" class="form-check-label fw-semibold">
+                                    <i class="fas fa-repeat text-primary me-1"></i>
+                                    @Html.DisplayNameFor(m => m.IsRecurring)
+                                </label>
+                                <div class="form-text">Check this if this is a regular recurring income (e.g., monthly salary)</div>
+                            </div>
+                        </div>
+
+                        <!-- Validation Summary -->
+                        <div asp-validation-summary="All" class="alert alert-danger" role="alert"></div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="@Url.Action("Index", "Dashboard")" class="btn btn-outline-secondary btn-lg">
+                                <i class="fas fa-arrow-left me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-success btn-lg px-4">
+                                <i class="fas fa-plus-circle me-2"></i>Add Income
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Quick Tips -->
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-header bg-light">
+                    <h6 class="fw-bold mb-0">
+                        <i class="fas fa-lightbulb text-warning me-2"></i>Tips for Recording Income
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul class="list-unstyled mb-0">
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    <strong>Be specific:</strong> Use clear descriptions like "Monthly salary - January 2024"
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    <strong>Keep receipts:</strong> Upload proof of income for tax purposes
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul class="list-unstyled mb-0">
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    <strong>Use categories:</strong> Proper categorization helps with reporting
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    <strong>Record promptly:</strong> Add income as soon as you receive it
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            // Auto-focus on amount field
+            $('#Amount').focus();
+            
+            // Format amount input
+            $('#Amount').on('input', function() {
+                let value = $(this).val();
+                if (value && !isNaN(value)) {
+                    $(this).removeClass('is-invalid');
+                }
+            });
+            
+            // Enhanced form validation
+            $('form').on('submit', function() {
+                let isValid = true;
+                
+                // Check required fields
+                $('input[required], select[required]').each(function() {
+                    if (!$(this).val()) {
+                        $(this).addClass('is-invalid');
+                        isValid = false;
+                    } else {
+                        $(this).removeClass('is-invalid');
+                    }
+                });
+                
+                if (!isValid) {
+                    $('html, body').animate({
+                        scrollTop: $('.is-invalid').first().offset().top - 100
+                    }, 500);
+                    return false;
+                }
+                
+                // Show loading state
+                $(this).find('button[type="submit"]').prop('disabled', true)
+                    .html('<i class="fas fa-spinner fa-spin me-2"></i>Adding Income...');
+            });
+            
+            // File upload validation
+            $('#ReceiptFile').on('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'application/pdf'];
+                    const maxSize = 5 * 1024 * 1024; // 5MB
+                    
+                    if (!validTypes.includes(file.type)) {
+                        $(this).addClass('is-invalid');
+                        $(this).next('.form-text').text('Invalid file type. Please select JPG, PNG, PDF, or GIF.');
+                        return;
+                    }
+                    
+                    if (file.size > maxSize) {
+                        $(this).addClass('is-invalid');
+                        $(this).next('.form-text').text('File size too large. Maximum 5MB allowed.');
+                        return;
+                    }
+                    
+                    $(this).removeClass('is-invalid');
+                    $(this).next('.form-text').html(`<i class="fas fa-check text-success me-1"></i>File selected: ${file.name}`);
+                }
+            });
+        });
+    </script>
+} 

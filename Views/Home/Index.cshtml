@@ -1,0 +1,216 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<!-- Hero Section -->
+<section class="bg-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center" style="min-height: 75vh;">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">
+                    Take Control of Your 
+                    <span class="text-warning">Financial Future</span>
+                </h1>
+                <p class="lead mb-4">
+                    Powerful budget management system designed for individuals and businesses. 
+                    Track expenses, plan budgets, and achieve your financial goals with ease.
+                </p>
+                <div class="d-flex gap-3 flex-wrap">
+                    <a asp-controller="Account" asp-action="Register" class="btn btn-warning btn-lg px-4">
+                        <i class="fas fa-rocket me-2"></i>Get Started Free
+                    </a>
+                    <a href="#features" class="btn btn-outline-light btn-lg px-4">
+                        <i class="fas fa-play me-2"></i>Learn More
+                    </a>
+                </div>
+                <div class="mt-4">
+                    <small class="opacity-75">
+                        <i class="fas fa-check-circle me-2"></i>No credit card required
+                        <i class="fas fa-check-circle ms-3 me-2"></i>Free forever plan
+                        <i class="fas fa-check-circle ms-3 me-2"></i>Setup in minutes
+                    </small>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <div class="bg-white rounded-3 shadow-lg p-4 text-dark mx-auto" style="max-width: 300px;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="mb-0 fw-bold">Dashboard Overview</h6>
+                        <span class="badge bg-success">Live</span>
+                    </div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-4">
+                            <div class="bg-primary bg-opacity-10 rounded p-2 text-center">
+                                <i class="fas fa-dollar-sign text-primary"></i>
+                                <div class="small mt-1">Income</div>
+                                <div class="fw-bold">$5,240</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="bg-danger bg-opacity-10 rounded p-2 text-center">
+                                <i class="fas fa-credit-card text-danger"></i>
+                                <div class="small mt-1">Expenses</div>
+                                <div class="fw-bold">$3,180</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="bg-success bg-opacity-10 rounded p-2 text-center">
+                                <i class="fas fa-piggy-bank text-success"></i>
+                                <div class="small mt-1">Saved</div>
+                                <div class="fw-bold">$2,060</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="progress mb-2" style="height: 8px;">
+                        <div class="progress-bar bg-success" style="width: 65%"></div>
+                    </div>
+                    <small class="text-muted">65% of budget remaining</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold mb-3">Everything You Need to Manage Your Money</h2>
+            <p class="lead text-muted">Comprehensive tools for individuals and businesses</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-primary bg-opacity-10 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-chart-line fa-2x text-primary"></i>
+                        </div>
+                        <h5 class="fw-bold mb-3">Expense Tracking</h5>
+                        <p class="text-muted mb-0">
+                            Track every expense automatically with smart categorization and detailed insights into your spending patterns.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-success bg-opacity-10 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-bullseye fa-2x text-success"></i>
+                        </div>
+                        <h5 class="fw-bold mb-3">Budget Planning</h5>
+                        <p class="text-muted mb-0">
+                            Create realistic budgets, set spending limits, and get alerts when you're approaching your limits.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-warning bg-opacity-10 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-flag fa-2x text-warning"></i>
+                        </div>
+                        <h5 class="fw-bold mb-3">Financial Goals</h5>
+                        <p class="text-muted mb-0">
+                            Set and track progress towards your financial goals with visual progress indicators and milestone celebrations.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-info bg-opacity-10 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-file-invoice fa-2x text-info"></i>
+                        </div>
+                        <h5 class="fw-bold mb-3">Bill Reminders</h5>
+                        <p class="text-muted mb-0">
+                            Never miss a payment again with intelligent bill reminders and automated payment scheduling.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-secondary bg-opacity-10 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-chart-pie fa-2x text-secondary"></i>
+                        </div>
+                        <h5 class="fw-bold mb-3">Smart Reports</h5>
+                        <p class="text-muted mb-0">
+                            Generate detailed reports and analytics to understand your financial health and make informed decisions.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-danger bg-opacity-10 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-building fa-2x text-danger"></i>
+                        </div>
+                        <h5 class="fw-bold mb-3">Business Tools</h5>
+                        <p class="text-muted mb-0">
+                            Advanced features for SMEs including multi-user access, department budgets, and cash flow forecasting.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Statistics Section -->
+<section class="py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-lg-3 col-md-6 mb-4">
+                <h3 class="display-4 fw-bold mb-0">50K+</h3>
+                <p class="mb-0">Active Users</p>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <h3 class="display-4 fw-bold mb-0">$2M+</h3>
+                <p class="mb-0">Money Managed</p>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <h3 class="display-4 fw-bold mb-0">98%</h3>
+                <p class="mb-0">Satisfaction Rate</p>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <h3 class="display-4 fw-bold mb-0">24/7</h3>
+                <p class="mb-0">Support Available</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h2 class="display-5 fw-bold mb-4">Ready to Transform Your Financial Life?</h2>
+                <p class="lead text-muted mb-4">
+                    Join thousands of users who have already taken control of their finances with our comprehensive budget management system.
+                </p>
+                <div class="d-flex gap-3 justify-content-center flex-wrap">
+                    <a asp-controller="Account" asp-action="Register" class="btn btn-primary btn-lg px-5">
+                        <i class="fas fa-user-plus me-2"></i>Start Your Free Account
+                    </a>
+                    <a asp-controller="Home" asp-action="Features" class="btn btn-outline-primary btn-lg px-5">
+                        <i class="fas fa-info-circle me-2"></i>View All Features
+                    </a>
+                </div>
+                <p class="small text-muted mt-3">
+                    <i class="fas fa-shield-alt me-2"></i>Bank-level security • SSL encrypted • GDPR compliant
+                </p>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,72 @@
+@{
+    ViewData["Title"] = "Registration Successful";
+}
+
+<div class="container">
+    <div class="row justify-content-center py-5">
+        <div class="col-lg-6 col-md-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-5 text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-envelope-open-text fa-4x text-success mb-3"></i>
+                        <h2 class="fw-bold text-success">Registration Successful!</h2>
+                        <p class="text-muted">We've sent a verification email to verify your account</p>
+                    </div>
+
+                    <div class="alert alert-info border-0" role="alert">
+                        <h6 class="alert-heading fw-bold">
+                            <i class="fas fa-info-circle me-2"></i>Please Check Your Email
+                        </h6>
+                        <p class="mb-2">
+                            We've sent a verification email to <strong>@ViewBag.Email</strong>
+                        </p>
+                        <p class="mb-0">
+                            Click the verification link in the email to activate your account and start managing your budget.
+                        </p>
+                    </div>
+
+                    <div class="text-start my-4">
+                        <h6 class="fw-bold mb-3">Next Steps:</h6>
+                        <ol class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Check your email inbox (including spam folder)
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-mouse-pointer text-primary me-2"></i>
+                                Click the verification link in the email
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-sign-in-alt text-info me-2"></i>
+                                Log in to your account and start budgeting
+                            </li>
+                        </ol>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-block">
+                        <a asp-controller="Account" asp-action="Login" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt me-2"></i>Go to Login
+                        </a>
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="fas fa-home me-2"></i>Back to Home
+                        </a>
+                    </div>
+
+                    <div class="mt-4 pt-4 border-top">
+                        <p class="small text-muted mb-2">
+                            <strong>Didn't receive the email?</strong>
+                        </p>
+                        <ul class="small text-muted list-unstyled">
+                            <li>• Check your spam or junk mail folder</li>
+                            <li>• Make sure you entered the correct email address</li>
+                            <li>• Wait a few minutes for the email to arrive</li>
+                        </ul>
+                        <p class="small text-muted">
+                            If you still don't receive the email, please <a href="mailto:support@budgetsystem.com" class="text-primary">contact support</a>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

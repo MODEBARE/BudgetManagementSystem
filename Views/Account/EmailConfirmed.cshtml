@@ -1,0 +1,99 @@
+@{
+    ViewData["Title"] = "Email Verified";
+}
+
+<div class="container">
+    <div class="row justify-content-center py-5">
+        <div class="col-lg-6 col-md-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-5 text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
+                        <h2 class="fw-bold text-success">Email Verified Successfully!</h2>
+                        <p class="text-muted">Welcome to Budget System, @ViewBag.UserName!</p>
+                    </div>
+
+                    <div class="alert alert-success border-0" role="alert">
+                        <h6 class="alert-heading fw-bold">
+                            <i class="fas fa-party-horn me-2"></i>Your Account is Ready!
+                        </h6>
+                        <p class="mb-0">
+                            Your email has been verified and your account is now active. 
+                            You can now access all features of Budget System.
+                        </p>
+                    </div>
+
+                    <div class="row g-3 my-4">
+                        <div class="col-6">
+                            <div class="bg-light rounded p-3 text-center">
+                                <i class="fas fa-chart-line text-primary fa-2x mb-2"></i>
+                                <h6 class="fw-bold">Track Expenses</h6>
+                                <small class="text-muted">Monitor your spending</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="bg-light rounded p-3 text-center">
+                                <i class="fas fa-bullseye text-success fa-2x mb-2"></i>
+                                <h6 class="fw-bold">Create Budgets</h6>
+                                <small class="text-muted">Plan your finances</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="bg-light rounded p-3 text-center">
+                                <i class="fas fa-flag text-warning fa-2x mb-2"></i>
+                                <h6 class="fw-bold">Set Goals</h6>
+                                <small class="text-muted">Achieve your dreams</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="bg-light rounded p-3 text-center">
+                                <i class="fas fa-chart-pie text-info fa-2x mb-2"></i>
+                                <h6 class="fw-bold">View Reports</h6>
+                                <small class="text-muted">Analyze your data</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-block">
+                        <a asp-controller="Account" asp-action="Login" class="btn btn-primary btn-lg">
+                            <i class="fas fa-sign-in-alt me-2"></i>Sign In Now
+                        </a>
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary btn-lg">
+                            <i class="fas fa-home me-2"></i>Back to Home
+                        </a>
+                    </div>
+
+                    <div class="mt-4 pt-4 border-top">
+                        <h6 class="fw-bold mb-3">What's Next?</h6>
+                        <ul class="list-unstyled text-start">
+                            <li class="mb-2">
+                                <i class="fas fa-arrow-right text-primary me-2"></i>
+                                Sign in to your account
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-arrow-right text-primary me-2"></i>
+                                Complete your profile setup
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-arrow-right text-primary me-2"></i>
+                                Create your first budget
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-arrow-right text-primary me-2"></i>
+                                Start tracking your expenses
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="mt-4">
+                        <p class="small text-muted">
+                            Need help getting started? Check out our 
+                            <a href="#" class="text-primary">quick start guide</a> or 
+                            <a href="#" class="text-primary">video tutorials</a>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

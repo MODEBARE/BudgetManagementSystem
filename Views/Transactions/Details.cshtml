@@ -1,0 +1,392 @@
+@using BudgetSystem.Models.ViewModels
+@model TransactionDetailViewModel
+@{
+    ViewData["Title"] = $"Transaction Details - {Model.Description}";
+}
+
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="@Url.Action("Index")">Transactions</a></li>
+                            <li class="breadcrumb-item active">Details</li>
+                        </ol>
+                    </nav>
+                    <h2 class="fw-bold mb-0">Transaction Details</h2>
+                </div>
+                <div>
+                    <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-1"></i>Back to List
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Main Transaction Details -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-@Model.TypeColor bg-opacity-10">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-@Model.TypeColor bg-opacity-20 rounded-circle p-3 me-3">
+                                <i class="fas @Model.TypeIcon fa-lg text-@Model.TypeColor"></i>
+                            </div>
+                            <div>
+                                <h4 class="fw-bold mb-1">@Model.Description</h4>
+                                <span class="badge bg-@Model.TypeColor">@Model.TypeDisplay</span>
+                                @if (Model.IsRecurring)
+                                {
+                                    <span class="badge bg-info ms-1">
+                                        <i class="fas fa-repeat me-1"></i>Recurring
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <h3 class="fw-bold text-@Model.TypeColor mb-0">@Model.AmountDisplay</h3>
+                            <small class="text-muted">@Model.TransactionDate.ToString("MMMM dd, yyyy")</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <!-- Basic Information -->
+                        <div class="col-md-6">
+                            <h6 class="fw-bold text-muted mb-3">
+                                <i class="fas fa-info-circle me-2"></i>Basic Information
+                            </h6>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold text-muted">Date & Time</label>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-calendar text-primary me-2"></i>
+                                    <span>@Model.TransactionDate.ToString("dddd, MMMM dd, yyyy 'at' h:mm tt")</span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold text-muted">Category</label>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas @Model.GetCategoryIcon() text-primary me-2"></i>
+                                    <span class="badge bg-secondary fs-6">@Model.Category</span>
+                                </div>
+                            </div>
+                            @if (!string.IsNullOrEmpty(Model.Reference))
+                            {
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold text-muted">Reference</label>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-hashtag text-primary me-2"></i>
+                                        <span class="font-monospace">@Model.Reference</span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Account Information -->
+                        <div class="col-md-6">
+                            <h6 class="fw-bold text-muted mb-3">
+                                <i class="fas fa-wallet me-2"></i>Account Information
+                            </h6>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold text-muted">Account</label>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas @Model.GetAccountIcon() text-primary me-2"></i>
+                                    <span>@Model.AccountName</span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold text-muted">Account Type</label>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-tag text-primary me-2"></i>
+                                    <span class="badge bg-info">@Model.AccountType.ToString()</span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold text-muted">Current Account Balance</label>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-balance-scale text-primary me-2"></i>
+                                    <span class="fw-bold">@Model.GetCurrencySymbol()@Model.AccountCurrentBalance.ToString("N2")</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Notes))
+                    {
+                        <hr class="my-4">
+                        <div>
+                            <h6 class="fw-bold text-muted mb-3">
+                                <i class="fas fa-sticky-note me-2"></i>Notes
+                            </h6>
+                            <div class="bg-light rounded p-3">
+                                <p class="mb-0">@Model.Notes</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Receipt Section -->
+            @if (Model.HasReceipt)
+            {
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-light">
+                        <h5 class="fw-bold mb-0">
+                            <i class="fas fa-paperclip me-2"></i>Receipt Attachment
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="bg-success bg-opacity-10 rounded-circle p-3 me-3">
+                                        <i class="fas @Model.GetReceiptFileIcon() fa-lg text-success"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="fw-semibold mb-1">@Model.ReceiptFileName</h6>
+                                        <small class="text-muted">@Model.ReceiptFileExtension?.ToUpperInvariant().TrimStart('.') File • Uploaded with transaction</small>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex gap-2 mb-3">
+                                    <a href="@Url.Action("View", "Receipt", new { transactionId = Model.Id })" 
+                                       target="_blank" 
+                                       class="btn btn-primary btn-sm">
+                                        <i class="fas fa-eye me-1"></i>View Receipt
+                                    </a>
+                                    <a href="@Url.Action("Download", "Receipt", new { transactionId = Model.Id })" 
+                                       class="btn btn-outline-success btn-sm">
+                                        <i class="fas fa-download me-1"></i>Download
+                                    </a>
+                                    <a href="@Url.Action("Test", "Receipt")" 
+                                       target="_blank" 
+                                       class="btn btn-outline-info btn-sm">
+                                        <i class="fas fa-bug me-1"></i>Debug
+                                    </a>
+                                </div>
+                                
+                                @if (Model.IsReceiptImage())
+                                {
+                                    <div class="alert alert-info small">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        <strong>Image Receipt:</strong> Click "View Receipt" to see the full-size image in a new tab.
+                                    </div>
+                                }
+                                else if (Model.ReceiptFileExtension == ".pdf")
+                                {
+                                    <div class="alert alert-info small">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        <strong>PDF Receipt:</strong> Click "View Receipt" to open the PDF document in a new tab.
+                                    </div>
+                                }
+                            </div>
+                            
+                            @if (Model.IsReceiptImage())
+                            {
+                                <div class="col-md-4">
+                                    <div class="receipt-preview">
+                                        <h6 class="fw-semibold mb-2">Preview</h6>
+                                        <div class="border rounded p-2 text-center bg-light">
+                                                                                         <img src="@Url.Action("View", "Receipt", new { transactionId = Model.Id })" 
+                                                 alt="Receipt Preview" 
+                                                 class="img-fluid rounded receipt-preview-img"
+                                                 style="max-height: 200px; cursor: pointer;"
+                                                 onclick="window.open('@Url.Action("View", "Receipt", new { transactionId = Model.Id })', '_blank')"
+                                                 title="Click to view full size" />
+                                        </div>
+                                        <small class="text-muted">Click to view full size</small>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-light">
+                        <h5 class="fw-bold mb-0">
+                            <i class="fas fa-paperclip me-2"></i>Receipt
+                        </h5>
+                    </div>
+                    <div class="card-body text-center py-4">
+                        <i class="fas fa-file-excel fa-2x text-muted mb-3"></i>
+                        <h6 class="text-muted">No Receipt Attached</h6>
+                        <p class="text-muted small mb-0">No receipt was uploaded for this transaction.</p>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Quick Stats -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-chart-bar me-2"></i>Quick Stats
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="text-center">
+                                <i class="fas fa-clock fa-lg text-primary mb-2"></i>
+                                <div class="fw-bold">@((DateTime.Now - Model.CreatedAt).Days)</div>
+                                <small class="text-muted">Days ago</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-center">
+                                <i class="fas fa-calendar-day fa-lg text-info mb-2"></i>
+                                <div class="fw-bold">@Model.TransactionDate.ToString("ddd")</div>
+                                <small class="text-muted">Day of week</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transaction Actions -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-cogs me-2"></i>Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="@Url.Action("Edit", new { id = Model.Id })" class="btn btn-warning">
+                            <i class="fas fa-edit me-1"></i>Edit Transaction
+                        </a>
+                        <a href="@Url.Action("Delete", new { id = Model.Id })" class="btn btn-danger">
+                            <i class="fas fa-trash me-1"></i>Delete Transaction
+                        </a>
+                        <hr class="my-2">
+                        <a href="@Url.Action("Index")" class="btn btn-outline-primary">
+                            <i class="fas fa-list me-1"></i>View All Transactions
+                        </a>
+                        @if (Model.Type == TransactionType.Credit)
+                        {
+                            <a href="@Url.Action("AddIncome")" class="btn btn-outline-success">
+                                <i class="fas fa-plus me-1"></i>Add Similar Income
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("AddExpense")" class="btn btn-outline-danger">
+                                <i class="fas fa-minus me-1"></i>Add Similar Expense
+                            </a>
+                        }
+                        <a href="@Url.Action("Index", "Dashboard")" class="btn btn-outline-secondary">
+                            <i class="fas fa-home me-1"></i>Back to Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Related Information -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Transaction Info
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-muted small">Transaction ID</label>
+                        <div class="font-monospace small">#@Model.Id.ToString("D6")</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-muted small">Created On</label>
+                        <div class="small">@Model.CreatedAt.ToString("MMM dd, yyyy 'at' h:mm tt")</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-muted small">Currency</label>
+                        <div class="small">
+                            <span class="badge bg-info">@Model.UserCurrency.ToString()</span>
+                            <span class="ms-1">(@Model.GetCurrencySymbol())</span>
+                        </div>
+                    </div>
+                    @if (Model.Type == TransactionType.Credit)
+                    {
+                        <div class="alert alert-success small mb-0">
+                            <i class="fas fa-info-circle me-1"></i>
+                            This income was added to your <strong>@Model.AccountName</strong> account.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info small mb-0">
+                            <i class="fas fa-info-circle me-1"></i>
+                            This expense was deducted from your <strong>@Model.AccountName</strong> account.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Add smooth animations
+            $('.card').addClass('animate__animated animate__fadeInUp');
+            
+            // Show tooltip for long descriptions
+            $('[data-bs-toggle="tooltip"]').tooltip();
+            
+            // Auto-focus on back button when page loads
+            setTimeout(function() {
+                $('.btn-outline-secondary:first').focus();
+            }, 500);
+            
+            // Receipt preview hover effects
+            $('.receipt-preview-img').hover(
+                function() {
+                    $(this).css('transform', 'scale(1.05)');
+                },
+                function() {
+                    $(this).css('transform', 'scale(1)');
+                }
+            );
+        });
+    </script>
+}
+
+<style>
+    .receipt-preview-img {
+        transition: transform 0.2s ease-in-out;
+        border: 2px solid #dee2e6;
+    }
+    
+    .receipt-preview-img:hover {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    }
+    
+    .receipt-preview {
+        position: relative;
+    }
+    
+    .receipt-preview::before {
+        content: '';
+        position: absolute;
+        top: -5px;
+        left: -5px;
+        right: -5px;
+        bottom: -5px;
+        background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+        border-radius: 8px;
+        z-index: -1;
+        opacity: 0.5;
+    }
+</style> 

@@ -1,0 +1,314 @@
+@using BudgetSystem.ViewModels
+@model EditTransactionViewModel
+@{
+    ViewData["Title"] = $"Edit {Model.TypeDisplay} - {Model.Description}";
+}
+
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index")">Transactions</a></li>
+                    <li class="breadcrumb-item"><a href="@Url.Action("Details", new { id = Model.Id })">Details</a></li>
+                    <li class="breadcrumb-item active">Edit</li>
+                </ol>
+            </nav>
+            <h2 class="fw-bold mb-0">
+                <i class="fas @Model.TypeIcon text-@Model.TypeColor me-2"></i>
+                Edit @Model.TypeDisplay Transaction
+            </h2>
+            <p class="text-muted mb-0">Make changes to this @Model.TypeDisplay.ToLower() transaction</p>
+        </div>
+    </div>
+
+    <form asp-action="Edit" method="post" enctype="multipart/form-data" novalidate>
+        <input asp-for="Id" type="hidden" />
+        <input asp-for="Type" type="hidden" />
+        <input asp-for="CurrentReceiptPath" type="hidden" />
+        <input asp-for="CreatedAt" type="hidden" />
+        <input asp-for="OriginalAmount" type="hidden" />
+        <input asp-for="UserCurrency" type="hidden" />
+
+        <div class="row">
+            <!-- Main Form -->
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-@Model.TypeColor bg-opacity-10">
+                        <h5 class="fw-bold mb-0">
+                            <i class="fas fa-edit me-2"></i>Transaction Details
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-4">
+                            <!-- Description -->
+                            <div class="col-12">
+                                <label asp-for="Description" class="form-label fw-semibold">Description</label>
+                                <input asp-for="Description" class="form-control" placeholder="Enter transaction description" />
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                            </div>
+
+                            <!-- Amount and Date -->
+                            <div class="col-md-6">
+                                <label asp-for="Amount" class="form-label fw-semibold">Amount (@Model.GetCurrencySymbol())</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">@Model.GetCurrencySymbol()</span>
+                                    <input asp-for="Amount" class="form-control" step="0.01" min="0.01" />
+                                </div>
+                                <span asp-validation-for="Amount" class="text-danger"></span>
+                                @if (Model.Amount != Model.OriginalAmount)
+                                {
+                                    <small class="text-muted">
+                                        Original: @Model.GetCurrencySymbol()@Model.OriginalAmount.ToString("N2")
+                                    </small>
+                                }
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="TransactionDate" class="form-label fw-semibold">Transaction Date</label>
+                                <input asp-for="TransactionDate" type="datetime-local" class="form-control" />
+                                <span asp-validation-for="TransactionDate" class="text-danger"></span>
+                            </div>
+
+                            <!-- Category and Account -->
+                            <div class="col-md-6">
+                                <label asp-for="Category" class="form-label fw-semibold">Category</label>
+                                <select asp-for="Category" asp-items="Model.Categories" class="form-select">
+                                    <option value="">Select Category</option>
+                                </select>
+                                <span asp-validation-for="Category" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="AccountId" class="form-label fw-semibold">Account</label>
+                                <select asp-for="AccountId" asp-items="Model.Accounts" class="form-select">
+                                    <option value="">Select Account</option>
+                                </select>
+                                <span asp-validation-for="AccountId" class="text-danger"></span>
+                            </div>
+
+                            <!-- Reference -->
+                            <div class="col-md-6">
+                                <label asp-for="Reference" class="form-label fw-semibold">Reference</label>
+                                <input asp-for="Reference" class="form-control" placeholder="Optional reference number" />
+                                <span asp-validation-for="Reference" class="text-danger"></span>
+                            </div>
+
+                            <!-- Recurring -->
+                            <div class="col-md-6">
+                                <div class="form-check mt-4 pt-2">
+                                    <input asp-for="IsRecurring" class="form-check-input" />
+                                    <label asp-for="IsRecurring" class="form-check-label fw-semibold">
+                                        This is a recurring transaction
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Notes -->
+                            <div class="col-12">
+                                <label asp-for="Notes" class="form-label fw-semibold">Notes</label>
+                                <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Optional notes about this transaction"></textarea>
+                                <span asp-validation-for="Notes" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Receipt Section -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="fw-bold mb-0">
+                            <i class="fas fa-paperclip me-2"></i>Receipt Management
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        @if (Model.HasCurrentReceipt)
+                        {
+                            <div class="alert alert-info mb-3">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-file me-2"></i>
+                                    <div>
+                                        <strong>Current Receipt:</strong> @Model.CurrentReceiptFileName
+                                        <br>
+                                        <small class="text-muted">
+                                            <a href="@Url.Action("ViewReceipt", new { id = Model.Id })" target="_blank">View Current Receipt</a>
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input asp-for="RemoveCurrentReceipt" class="form-check-input" />
+                                    <label asp-for="RemoveCurrentReceipt" class="form-check-label">
+                                        Remove current receipt
+                                    </label>
+                                </div>
+                            </div>
+                        }
+
+                        <div class="mb-3">
+                            <label asp-for="NewReceiptFile" class="form-label fw-semibold">
+                                @(Model.HasCurrentReceipt ? "Replace with New Receipt" : "Add Receipt")
+                            </label>
+                            <input asp-for="NewReceiptFile" type="file" class="form-control" accept=".jpg,.jpeg,.png,.pdf,.gif" />
+                            <span asp-validation-for="NewReceiptFile" class="text-danger"></span>
+                            <div class="form-text">
+                                Supported formats: JPG, PNG, PDF, GIF. Max size: 5MB.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Audit Trail -->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-warning bg-opacity-10">
+                        <h5 class="fw-bold mb-0 text-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>Modification Reason
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <label asp-for="ModificationReason" class="form-label fw-semibold">
+                            Why are you modifying this transaction? <span class="text-danger">*</span>
+                        </label>
+                        <textarea asp-for="ModificationReason" class="form-control" rows="3" 
+                                  placeholder="Please provide a detailed reason for this modification for audit purposes..."
+                                  required></textarea>
+                        <span asp-validation-for="ModificationReason" class="text-danger"></span>
+                        <div class="form-text">
+                            This information is required for audit compliance and will be permanently recorded.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Transaction Info -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-light">
+                        <h6 class="fw-bold mb-0">
+                            <i class="fas fa-info-circle me-2"></i>Transaction Information
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-muted small">Transaction ID</label>
+                            <div class="font-monospace small">#@Model.Id.ToString("D6")</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-muted small">Type</label>
+                            <div>
+                                <span class="badge bg-@Model.TypeColor">@Model.TypeDisplay</span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-muted small">Created On</label>
+                            <div class="small">@Model.CreatedAt.ToString("MMM dd, yyyy 'at' h:mm tt")</div>
+                        </div>
+                        <div class="mb-0">
+                            <label class="form-label fw-semibold text-muted small">Currency</label>
+                            <div class="small">
+                                <span class="badge bg-info">@Model.UserCurrency.ToString()</span>
+                                <span class="ms-1">(@Model.GetCurrencySymbol())</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-light">
+                        <h6 class="fw-bold mb-0">
+                            <i class="fas fa-cogs me-2"></i>Actions
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save me-1"></i>Save Changes
+                            </button>
+                            <a href="@Url.Action("Details", new { id = Model.Id })" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-1"></i>Cancel
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            // Auto-focus on description field
+            $('#Description').focus();
+            
+            // Format amount field
+            $('#Amount').on('input', function() {
+                var value = parseFloat($(this).val());
+                if (!isNaN(value)) {
+                    // Optional: Add visual feedback for amount changes
+                    if (value !== @Model.OriginalAmount) {
+                        $(this).addClass('border-warning');
+                    } else {
+                        $(this).removeClass('border-warning');
+                    }
+                }
+            });
+
+            // Receipt file validation
+            $('#NewReceiptFile').on('change', function() {
+                var file = this.files[0];
+                if (file) {
+                    var maxSize = 5 * 1024 * 1024; // 5MB
+                    var allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'application/pdf'];
+                    
+                    if (file.size > maxSize) {
+                        alert('File size must be less than 5MB');
+                        $(this).val('');
+                        return;
+                    }
+                    
+                    if (!allowedTypes.includes(file.type)) {
+                        alert('Only JPG, PNG, PDF, and GIF files are allowed');
+                        $(this).val('');
+                        return;
+                    }
+                }
+            });
+
+            // Warning for significant amount changes
+            $('#Amount').on('blur', function() {
+                var newAmount = parseFloat($(this).val());
+                var originalAmount = @Model.OriginalAmount;
+                var percentChange = Math.abs((newAmount - originalAmount) / originalAmount * 100);
+                
+                if (percentChange > 50) {
+                    if (!confirm('You are changing the amount by more than 50%. Are you sure this is correct?')) {
+                        $(this).val(originalAmount);
+                        $(this).focus();
+                    }
+                }
+            });
+
+            // Form submission confirmation
+            $('form').on('submit', function(e) {
+                var reason = $('#ModificationReason').val().trim();
+                if (reason.length < 10) {
+                    e.preventDefault();
+                    alert('Please provide a more detailed reason for this modification (at least 10 characters).');
+                    $('#ModificationReason').focus();
+                    return false;
+                }
+                
+                return confirm('Are you sure you want to save these changes? This action will be recorded in the audit trail.');
+            });
+        });
+    </script>
+} 
